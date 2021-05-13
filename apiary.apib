@@ -224,11 +224,10 @@ Partner authenticate himself and obtain acces token
 
     + Attributes (Errors)
 
+# Group Application resources
 
-# Group Contract resources
-
-## Get contract details [/partner/v1/contracts/{contractNumber}]
-Partner may use resource `/partner/v1/contracts/{contractNumber}` to check the state of partner's contract and getting detailed information about contract.
+## Application operations [/partner/v1/applications]
+Partner may use resource `/partner/v1/applications` to check the state of partner's contract and getting detailed information about contract.
 
 If the request was successfully processed, partner receives HTTP status code 200.
 
@@ -239,33 +238,45 @@ In other cases, partner receives one of the following errors:
   | 500         | INTERNAL_SERVER_ERROR | Unexpected condition was encountered and no more specific message is suitable    |
 
   + Parameters
-      + contractNumber (string, optional, `4266554400`) - Primary identifier of the contract.
+      + applicationId (string, optional, `11200a0ee-adf54-dsa`) - Primary identifier of the application.
+      + contractNumber (string, optional, `4266554400`) - Identifier of the contract. Used when the partner does not have the application identifier.
 
-### Get contract details [GET]
+### Search applications [GET]
 
 + Response 200(application/json;charset=UTF-8)
 
-    + Attributes (Contract)
+    + Attributes (Application)
 
 
-+ Response 400(application/json;charset=UTF-8)
++ Response 404(application/json;charset=UTF-8)
 
     + Attributes (Errors)
 
-
 # Data Structures
 
-## Contract(object)
-+ `number`: `4266554400` (string, required) -  Primary identifier of the contract
-+ `customer` (ContractCustomer, required) - Customer data
-+ `type` (enum, required) - Type of contract
-    + `REVOLVING_LOAN` - Revolving loan, loan without predefined end
-+ revolvingLoan (RevolvingLoan, optional) - Detailed information about revolving loan contract (for example credit limit). Required for `REVOLVING_LOAN` type of contract
-+ `productCode`: `FL04B68` (string, required) -  Contract's product code
-+ services (array[Service], fixed-type, optional) - Additional contract services (for example insurance)
-+ originationContext (ContractOriginationContext, required) - Additional information about the context of origination of contract
+## ApplicationBase (object)
+Financing application base information
 
-## ContractCustomer(object)
+### Properties
++ `id`: `11200a0ee-adf54-dsa` (string, required) - Unique identifier in Home Credit
++ `status`: `CREATED` (enum, required) - Application state.
+    + `CREATED` - Application process has not started yet
+    + `PRESCORED` - Preliminary approved
+    + `APPROVED` - Application is approved, contract signature process is in progress
+    + `VERIFICATION` - Manual review of application by Home Credit employee is in progress
+    + `ALTERNATIVE` - Alternative offered to client
+    + `CONFIRMED` - Signed by client, contract finalization by Home Credit employee is in progress
+    + `REJECTED`
+    + `CANCELLED`
++ workflowSteps (array[WorkflowStep], fixed-type, optional) - Collection of application process actions available for current application state.
+
+## Application (ApplicationBase)
++ customer (ApplicationCustomerBase, optional) - Customer information
++ financedSubject (FinancedSubjectMinimal, required) - Subject of financing (for example Iphone purchase...)
++ originationContext (OriginationContext, required) - Additional information about context of application origination
++ services (array[Service], fixed-type, optional) - Additional services agreed for the application (for example insurance)
+
+## ApplicationCustomerBase (object)
 + `firstName`: `John` (string, required) -  Customer first (given) name.
 + `lastName`: `Newborn` (string, required) - Customer last (family) name.
 + `email`: `john.newborn@country.com` (string, optional) - E-mail address of customer.
@@ -284,43 +295,31 @@ In other cases, partner receives one of the following errors:
 + `PERMANENT` - Permanent residential address
 + `CONTACT` - Contact address
 
-## RevolvingLoan(object)
-+ creditLimit (Amount, optional) - Total amount that can be borrowed
+## OriginationContext (object)
++ createdDate: `2018-01-16` (string, optional) - Date the application has been created
 
-## ContractOriginationContext(object)
-+ application (OriginationApplication, required) - Application for this contract
+## FinancedSubjectAbstract (object)
++ type: `ORDER` (enum, required) - Type of financed subject
+    + `ORDER` - Client is financing purchase of goods.
 
-## OriginationApplication(object)
-+ financedSubject (FinancedSubject, required) - Primary subject of financing (for example IPhone purchase, loan for 20 000 CZK ...)
-+ status (enum, required) - Application status
-    + `CREATED` - Application process has not started yet
-    + `PRESCORED` - Preliminary approved
-    + `APPROVED` - Application is approved, contract signature process is in progress
-    + `VERIFICATION` - Manual review of application by Home Credit employee is in progress
-    + `ALTERNATIVE` - Alternative offered to client
-    + `CONFIRMED` - Signed by client, contract finalization by Home Credit employee is in progress
-    + `REJECTED`
-    + `CANCELLED`
+## FinancedSubjectMinimal (FinancedSubjectAbstract)
++ `order` (OrderMinimal, optional) - Information about the client's purchase of goods. REQUIRED for `ORDER` type of Financed subject
 
-## FinancedSubject(object)
-+ type (enum, required) - Financed subject type
-  + `ORDER` - Purchase of good
-+ order (Order, optional) - Information about client's purchase of goods. REQUIRED for `ORDER` type of Financed subject.
-
-##  Order(object)
-+ number: `11111111` (string,  optional) - Identifier, specified by the partner (e-shop, POS shop, intermediary), if provided.
-+ status (enum, required) - Status of the order
-  + `IN_PROCESS`
-  + `TO_SHIP` - Financing approved, order ready to be shipped to client
-  + `SHIPPED` - All order items was sent to customer
-  + `CHECKING_DELIVERY` - Verification of order delivery
-  + `DELIVERED` - All order items was delivered to customer
-  + `PAID` - Paid to merchant
-  + `CANCELLED` - Order was fully cancelled
-  + `TERMINATED` - All order items was returned to merchant
+## OrderMinimal (object)
++ number: `1234567890` (string, optional) - Identifier, specified by the partner (e-shop, POS shop)
 + totalPrice (Amount, required) - Total order amount, including VAT
 + downPayment (Amount, optional) - Down payment amount
 + variableSymbol: `1234567` (string,  optional) - Variable symbol (internal for partner) for reconciliation payment, if provided
++ financing (OrderFinancing, required) - Information about form of financing `ORDER` type of application
+
+## OrderFinancing (object)
++ type: `SHOPPING_WALLET` (enum, required) - Financing type
+    + `SHOPPING_WALLET` -  Revolving loan suitable for shopping, typically with payment card ("Kreditní karta")
++ `shoppingWallet` (ShoppingWallet, optional) - Product details for shopping wallet.  REQUIRED for `SHOPPING_WALLET` financing type
+
+## ShoppingWallet (object)
++ creditAmount (Amount, optional) - Selected credit amount of product
++ productCode: `COCONL06` (string, optional) - Product code.
 
 ## Service (object)
 + type: `INSURANCE` (enum, required) - Service type
@@ -329,6 +328,12 @@ In other cases, partner receives one of the following errors:
 
 ## Insurance (object)
 + code: `IN1` (string, required) - Maximal available credit amount
+
+## WorkflowStep (object)
++ code :`DELIVERY` (enum, required) - Workflow code
+    + `DELIVERY` - The application has been processed and the goods delivery process should be started
++ mandatory: `true` (boolean, required) - Workflow step may be optional (some additional services available for client) or required (scoring, contract signature etc.)
++ priority: `1` (string, required) - Identifier of workflow step's priority expressed as number (lowest number means highest priority)
 
 ## Error (object)
 + code: `BAD_REQUEST` (string, required) - Unique internal error code
