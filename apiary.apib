@@ -226,7 +226,7 @@ Partner authenticate himself and obtain acces token
 
 # Group Application resources
 
-## Application operations [/partner/v1/applications]
+## Application operations [/partner/v1/applications{?applicationId,contractNumber}]
 Partner may use resource `/partner/v1/applications` to check the state of partner's contract and getting detailed information about contract.
 
 If the request was successfully processed, partner receives HTTP status code 200.
@@ -237,11 +237,13 @@ In other cases, partner receives one of the following errors:
   | 400         | INVALID_REQUEST       | Request was not well formatted (malformed request syntax, size too large, etc.)  |
   | 500         | INTERNAL_SERVER_ERROR | Unexpected condition was encountered and no more specific message is suitable    |
 
-  + Parameters
-      + applicationId (string, optional, `11200a0ee-adf54-dsa`) - Primary identifier of the application.
-      + contractNumber (string, optional, `4266554400`) - Identifier of the contract. Used when the partner does not have the application identifier.
-
+ 
 ### Search applications [GET]
++ Parameters
+  + applicationId: `11200a0ee-adf54-dsa` (string, optional) - Primary identifier of the application.
+  + contractNumber: `4266554400` (string, optional) - Identifier of the contract. Used when the partner does not have the application identifier.
+
++ Request Valid (application/json;charset=UTF-8)
 
 + Response 200(application/json;charset=UTF-8)
 
