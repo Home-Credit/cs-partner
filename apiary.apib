@@ -23,23 +23,24 @@ The basic and minimum way how to implement HCO API is to at least implement:
 1. [Login](#reference/security/login-partner)
     - Partner must be authorized to be able to access the most resources
 
-## Naming conventions
-- we use camelCase for all object and attribute names
-- we use CAPITAL_UNDERSCORE for enum values
-- we use plural in resource names
-
-
 ## Documentation principles
 - attributes in request/response object are optional unless stated otherwise (`required` flag under attribute name)
 - a required attribute in an optional object means, that if an optional object is specified, it must contain the required attribute.
 - all values in request/response attributes are just examples, except for enum values - these are the only possible values for the given attribute.
 - documentation adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html), which makes a distinction between *major*, *minor*, and *patch* versions.
 
-## Key words used in this document (RFC 2119)
+### Naming conventions
+- we use camelCase for all object and attribute names
+- we use CAPITAL_UNDERSCORE for enum values
+- we use plural in resource names
+
+### Key words used in this document (RFC 2119)
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
-## Request restrictions
+## Home Credit REST API principles
+
+### Request restrictions
 Please, keep in mind following restrictions regarding requests:
 - Maximum request size is **10 MB**.
 - Maximum size of accepted single file is **500 kB**.
@@ -60,13 +61,13 @@ Please, keep in mind following restrictions regarding requests:
 | image/gif                                                                 | *.gif                      |
 
 
-## API calls limits
+### API calls limits
 When you reach API calls limit (you call the API more times than is your quota), you receive HTTP error 429. To inform you about limits we use following response headers:
 - `X-Rate-Limit-Limit` - The number of allowed requests in the current period
 - `X-Rate-Limit-Remaining` - The number of remaining requests in the current period
 - `X-Rate-Limit-Reset` - The number of seconds left in the current period
 
-## Versioning
+### Versioning
 We use API version in URL (e.g. `https://api.homecredit.cz/customer/v1/my/profile`). *Minor* changes and *patches* (see below) that don't break backwards compatibility do NOT increase API version, e.g. they MAY happen without prior notice and your application should be ready to handle them.
 
 *Minor* changes include:
@@ -75,10 +76,10 @@ We use API version in URL (e.g. `https://api.homecredit.cz/customer/v1/my/profil
 - adding new attribute to response body
 - adding new error codes and messages, provided that error structure is the same
 
-## Response encoding
+### Response encoding
 Unless stated otherwise, all responses are sent as `Content-Type: application/json; charset=utf-8`
 
-## HTTP status codes
+### HTTP status codes
 We use following status codes throughout the API, except for OAuth flow when response codes are prescribed in RFC
 - 200 `OK` - request was successful
 - 201 `Created` - request was successful and resource was created
@@ -94,7 +95,7 @@ We use following status codes throughout the API, except for OAuth flow when res
 - 500 `Internal Server Error` - something went wrong on our side
 - 503 `Service Unavailable` - there is planned service outage
 
-## Error handling
+### Error handling
 Besides HTTP status codes, which are the main indication if something goes wrong, we also use `errors` object to report more details about errors.
 
 Errors object example:
@@ -138,7 +139,7 @@ There are 3 levels of error severity:
 - `WARN` - non-critical error, execution can continue but further user interaction is advisable (for request to proceed, you MUST specify this error code in `override` request attribute). This MIGHT be indicated also by appropriate HTTP status code.
 - `INFO` - information only, execution can continue without user interaction.
 
-### Errors overview
+#### Errors overview
 | Status code | Code                  | Explanation                                                                     | Message                                                                                                        |
 | ---         | ---                   | ---                                                                             | ---                                                                                                            |
 | 400         | INVALID_REQUEST       | Request was not well formatted (malformed request syntax, size too large, etc.) | (*Various messages possible*) e.g. Unsupported combination of application state and order state                  |
@@ -146,7 +147,7 @@ There are 3 levels of error severity:
 | 422         | NOT_ALLOWED           | Operation is not allowed (internal reason)                                      | (*Various messages possible*) e.g. Not allowed (other reason)                                                    |
 | 500         | INTERNAL_SERVER_ERROR | Unexpected condition was encountered and no more specific message is suitable   | (*Various messages possible*) e.g. Failed to parse given JSON                                                  |
 
-## Formats
+### Formats
 - **date** and **time** uses [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatting, e.g.:
   - date is represented as `YYYY-mm-dd`. Timezone (local) is added when necessary.
   - time is represented as `Thh:mm:ss`. Timezone is added when necessary. Time with arbitrary number of digits respresenting miliseconds is also accepted (when [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format criteria is met) but the time without miliseconds is always returned.
