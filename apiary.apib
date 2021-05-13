@@ -247,14 +247,17 @@ In other cases, partner receives one of the following errors:
 
 + Response 200(application/json;charset=UTF-8)
 
-    + Attributes (Application)
+    + Attributes (SearchApplicationResponse)
 
 
-+ Response 404(application/json;charset=UTF-8)
++ Response 400(application/json;charset=UTF-8)
 
     + Attributes (Errors)
 
 # Data Structures
+
+## SearchApplicationResponse
++ data (array[Application], fixed-type, required) - Collection of found applications. If no application was found, data contains empty array
 
 ## ApplicationBase (object)
 Financing application base information
