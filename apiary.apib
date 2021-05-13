@@ -15,13 +15,14 @@ This online document describes Home Credit (HC) API for partners - the means for
 | Group of services                                           | Purpose                                                                                                                                                      |
 | ---                                                         | ---                                                                                                                                                          |
 | [Security](#reference/security)                             | Security rules and principles                                                                                                                                |
-| [Contract resources](#reference/contract-resources)   | Resources that allows getting information about *contract* during its whole life cycle                                                                                |
+| [Application resources](#reference/application-resources)   | Resources that allows getting information about *application* during its whole life cycle                                                                                |
 
 ### Basic implementation
-TBD
-The basic and minimum way how to implement HCO API is to at least implement:
+This API is very simple, partner should implement only this:
 1. [Login](#reference/security/login-partner)
     - Partner must be authorized to be able to access the most resources
+1. [Search application](#reference/application-resources/application-operations)
+    - Partner uses this resource for getting all necessary data
 
 ## Documentation principles
 - attributes in request/response object are optional unless stated otherwise (`required` flag under attribute name)
@@ -164,7 +165,6 @@ We support partial update using PATCH method. Use JSON Merge Patch according to 
 
 
 # Group Security
-TBD review
 To access our API, partner have to obtain *access token* first; this token is a string of arbitrary length (30+ chars) and it has to be included in HTTP header to every request to API. This section describes way to obtain valid access token and use it to access protected resources.
 
 - to obtain access token, use `/authentication/v2/partner` resource with appropriate parameters (see the [`/authentication/v2/partner` resource documentation](#reference/security/login-partner))
@@ -176,7 +176,7 @@ To access our API, partner have to obtain *access token* first; this token is a 
 So the real example using curl will look like:
 
 ```
-curl -H "Authorization: Bearer secret_token" https://api.homecredit.cz/partner/v2/contracts
+curl -H "Authorization: Bearer secret_token" https://api.homecredit.cz/partner/v2/applications
 ```
 
 - access token has limited time validity (for 2 hours). After it is expired, partner has to obtain new one using `/authentication/v2/partner` resource.
@@ -228,7 +228,7 @@ Partner authenticate himself and obtain acces token
 # Group Application resources
 
 ## Application operations [/partner/v1/applications{?applicationId,contractNumber}]
-Partner may use resource `/partner/v1/applications` to check the state of partner's contract and getting detailed information about contract.
+Partner may use resource `/partner/v1/applications` to check the state of partner's application and getting detailed information.
 
 If the request was successfully processed, partner receives HTTP status code 200.
 
