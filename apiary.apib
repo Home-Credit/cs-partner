@@ -226,9 +226,9 @@ Partner authenticate himself and obtain acces token
 # Group Application resources
 
 ## Application operations [/partner/v1/applications{?applicationId,contractNumber}]
-Partner may use resource `/partner/v1/applications` to check the state of partner's application and getting detailed information.
+Partner may use resource `/partner/v1/applications` to check the state of partner's application and getting detailed information about it. Partner needs any identifier of application, either identifier of application (`applicationId` which is in the form of UUID) or identifier of contract (human readable `contractNumber`).
 
-If the request was successfully processed, partner receives HTTP status code 200.
+If the request was successfully processed, partner receives HTTP status code 200. If specified application was not found, empty data are returned.
 
 In other cases, partner receives one of the following errors:
   | Status code | Code                  | Explanation                                                                      |
@@ -239,15 +239,14 @@ In other cases, partner receives one of the following errors:
  
 ### Search applications [GET]
 + Parameters
-  + applicationId: `11200a0ee-adf54-dsa` (string, optional) - Primary identifier of the application.
-  + contractNumber: `4266554400` (string, optional) - Identifier of the contract. Used when the partner does not have the application identifier.
+  + applicationId: `11200a0ee-adf54-dsa-5akdur` (string, optional) - Primary identifier of the application.
+  + contractNumber: `4066554400` (string, optional) - Identifier of the contract. Used when the partner does not have the application identifier.
 
 + Request Valid (application/json;charset=UTF-8)
 
 + Response 200(application/json;charset=UTF-8)
 
     + Attributes (SearchApplicationResponse)
-
 
 + Response 400(application/json;charset=UTF-8)
 
@@ -292,7 +291,7 @@ Financing application base information
 + `streetNumber`: `22` (string, required) - Street number
 + `city`: `Prague` (string, required) - City
 + `zip`: `140 00` (string, required) - Postal code
-+ `country`: `CZ` (string, required) - Customer's country, ISO 3166-1 format, subtype ALPHA-2. This means two letters in uppercase. https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
++ `country`: `CZ` (string, required) - Customer's country, [ISO 3166-1 format, subtype ALPHA-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). This means two letters in uppercase. 
 + `flags` (array[AddressFlag], fixed-type,  required) - Types of the address.
 
 ## AddressFlag(enum)
