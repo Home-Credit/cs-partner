@@ -276,9 +276,9 @@ Financing application base information
 ## Application (ApplicationBase)
 + customer (ApplicationCustomerBase, optional) - Customer information
 + financedSubject (FinancedSubjectMinimal, required) - Subject of financing (for example Iphone purchase...)
++ contract (Contract, optiona) - Information about contract originating from this application
 + originationContext (OriginationContext, required) - Additional information about context of application origination
 + services (array[Service], fixed-type, optional) - Additional services agreed for the application (for example insurance)
-+ contract (Contract, optiona) - Information about contract originating from this application
 
 ## ApplicationCustomerBase (object)
 + `firstName`: `John` (string, required) -  Customer first (given) name.
@@ -318,7 +318,7 @@ Financing application base information
 ## Contract (object)
 + number: `4066554400` (string, required) - Unique identifier of contract
 + creditAmount (Amount, required) - Selected credit amount of product
-+ productCode: `COCONL06` (string, required) - Product code.
++ productCode: `COCONL06` (string, required) - Product code
 
 ## Service (object)
 + type: `INSURANCE` (enum, required) - Service type
