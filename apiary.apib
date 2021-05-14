@@ -278,6 +278,7 @@ Financing application base information
 + financedSubject (FinancedSubjectMinimal, required) - Subject of financing (for example Iphone purchase...)
 + originationContext (OriginationContext, required) - Additional information about context of application origination
 + services (array[Service], fixed-type, optional) - Additional services agreed for the application (for example insurance)
++ contract (Contract, optiona) - Information about contract originating from this application
 
 ## ApplicationCustomerBase (object)
 + `firstName`: `John` (string, required) -  Customer first (given) name.
@@ -313,16 +314,11 @@ Financing application base information
 + totalPrice (Amount, required) - Total order amount, including VAT
 + downPayment (Amount, optional) - Down payment amount
 + variableSymbol: `1234567` (string,  optional) - Variable symbol (internal for partner) for reconciliation payment, if provided
-+ financing (OrderFinancing, required) - Information about form of financing `ORDER` type of application
 
-## OrderFinancing (object)
-+ type: `SHOPPING_WALLET` (enum, required) - Financing type
-    + `SHOPPING_WALLET` -  Revolving loan suitable for shopping, typically with payment card ("Kreditní karta")
-+ `shoppingWallet` (ShoppingWallet, optional) - Product details for shopping wallet.  REQUIRED for `SHOPPING_WALLET` financing type
-
-## ShoppingWallet (object)
-+ creditAmount (Amount, optional) - Selected credit amount of product
-+ productCode: `COCONL06` (string, optional) - Product code.
+## Contract (object)
++ number: `4066554400` (string, required) - Unique identifier of contract
++ creditAmount (Amount, required) - Selected credit amount of product
++ productCode: `COCONL06` (string, required) - Product code.
 
 ## Service (object)
 + type: `INSURANCE` (enum, required) - Service type
