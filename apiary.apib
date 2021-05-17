@@ -197,14 +197,16 @@ curl -H "Authorization: Bearer secret_token" https://api.homecredit.cz/partner/v
 }
 ```
 
-> IMPORTANT NOTE: Partner must keep his access token and login credentials safe. Login credentials nor access token should NEVER be put into client page. If partner plans to integrate API calls in client flow without submitting the page to server, he should implement REST endpoint bound to his shopping basket session, that will be used as a proxy to call HC API.
+> **IMPORTANT NOTE:** Partner must keep his access token and login credentials safe. Login credentials nor access token should NEVER be put into client page. If partner plans to integrate API calls in client flow without submitting the page to server, he should implement REST endpoint bound to his shopping basket session, that will be used as a proxy to call HC API.
 
 > NEVER transfer access token nor login credentials over plain HTTP. Such requests will be refused.
 
 ## Login partner [/authentication/v2/partner]
+Partner authenticate himself and obtain acces token with this resource.
+
+> **IMPORTANT NOTE:** Credentials for `/authentication/v1/partner` and  `/authentication/v2/partner` are not the same! 
 
 ### Login partner [POST]
-Partner authenticate himself and obtain acces token
 
 + Request (application/json; charset=utf-8)
     + Attributes (PartnerLogin)
