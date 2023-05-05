@@ -4,7 +4,7 @@ HOST: https://api.homecredit.cz
 # Home Credit - Partner API
 API documentation for Home Credit API for partners.
 
-> Version of documentation: `1.1.1`
+> Version of documentation: `1.2.1`
 
 
 ## Getting started
@@ -19,7 +19,7 @@ This online document describes Home Credit (HC) API for partners - the means for
 This API is very simple, partner should implement only this:
 1. [Login](#reference/security/login-partner)
     - Partner must be authorized to be able to access the most resources
-1. [Search applications](#reference/application-resources/application-operations)
+1. [Search application](#reference/application-resources/application-operations)
     - Partner uses this resource for getting all necessary data
 
 ## Documentation principles
@@ -61,7 +61,7 @@ Please, keep in mind following restrictions regarding requests:
 
 
 ### API calls limits
-When you reach API calls limit (you call the API more times than is your quota), you receive HTTP error 429. To inform you about limits we use following response headers:
+When partner reaches API calls limit (calls the API more times than is his quota), HTTP error 429 is returned. To inform about limits we use following response headers:
 - `X-Rate-Limit-Limit` - The number of allowed requests in the current period
 - `X-Rate-Limit-Remaining` - The number of remaining requests in the current period
 - `X-Rate-Limit-Reset` - The number of seconds left in the current period
@@ -83,14 +83,14 @@ We use following status codes throughout the API, except for OAuth flow when res
 - 200 `OK` - request was successful
 - 201 `Created` - request was successful and resource was created
 - 202 `Accepted` - request has been accepted for processing, but the processing has not been completed
-- 204 `No Content` - we accepted your request but there is nothing to return (e.g. response is empty)
+- 204 `No Content` - we accepted partner's request but there is nothing to return (e.g. response is empty)
 - 400 `Bad Request` - syntax error, e.g. request is missing required parameters/attributes or parameter values are of incorrect type
-- 401 `Unauthorized` - your API key is wrong or user not authorized (not logged in)
+- 401 `Unauthorized` - partner is not authorized
 - 403 `Forbidden` - access denied (e.g. user / application is not allowed to use the resource)
 - 404 `Not Found` - resource could not be found
 - 405 `Method Not Allowed` - specified method is not allowed for resource
 - 422 `Unprocessable Entity` -  business (semantic) errors. Request is well-formed, but cannot be processed (e.g. payment due date is in past). Errors are specified in response body (see below)
-- 429 `Too Many Requests` - you exceeded the rate limit (see section [API calls limit](#introduction/api-calls-limits) above)
+- 429 `Too Many Requests` - partner exceeded the rate limit (see section [API calls limit](#introduction/api-calls-limits) above)
 - 500 `Internal Server Error` - something went wrong on our side
 - 503 `Service Unavailable` - there is planned service outage
 
@@ -135,7 +135,7 @@ Error object attributes
 
 There are 3 levels of error severity:
 - `ERROR` - critical error, execution cannot continue. This MUST be indicated also by appropriate HTTP status code (e.g. `422 Unprocessable Entity`)
-- `WARN` - non-critical error, execution can continue but further user interaction is advisable (for request to proceed, you MUST specify this error code in `override` request attribute). This MIGHT be indicated also by appropriate HTTP status code.
+- `WARN` - non-critical error, execution can continue but further user interaction is advisable (for request to proceed, partner MUST specify this error code in `override` request attribute). This MIGHT be indicated also by appropriate HTTP status code.
 - `INFO` - information only, execution can continue without user interaction.
 
 #### Errors overview
@@ -174,7 +174,7 @@ To access our API, partner have to obtain *access token* first; this token is a 
 So the real example using curl will look like:
 
 ```
-curl -H "Authorization: Bearer secret_token" https://api.homecredit.cz/partner/v2/applications
+curl -H "Authorization: Bearer secret_token" https://api.homecredit.cz/partner/v1/applications
 ```
 
 - access token has limited time validity (for 2 hours). After it is expired, partner has to obtain new one using `/authentication/v2/partner` resource.
@@ -204,7 +204,7 @@ curl -H "Authorization: Bearer secret_token" https://api.homecredit.cz/partner/v
 ## Login partner [/authentication/v2/partner]
 Partner authenticate himself and obtain acces token with this resource.
 
-> **IMPORTANT NOTE:** Credentials for `/authentication/v1/partner` and  `/authentication/v2/partner` are not the same! 
+> **IMPORTANT NOTE:** Credentials for `/authentication/v1/partner` and  `/authentication/v2/partner` are not the same!
 
 ### Login partner [POST]
 
@@ -228,7 +228,7 @@ Partner authenticate himself and obtain acces token with this resource.
 # Group Application resources
 
 ## Application operations [/partner/v1/applications{?applicationId,contractNumber}]
-Partner may use resource `/partner/v1/applications` to check the state of partner's application and getting detailed information about it. Partner needs any identifier of application, either identifier of application (`applicationId` which is in the form of UUID) or identifier of contract (human readable `contractNumber`).
+Partner may use resource `/partner/v1/applications` to check the state of partner's application and getting detailed information about it. Partner needs any identifier of application, either technical identifier of application (`applicationId` which is in the form of UUID), identifier of contract (human readable `contractNumber`) or `applicationKey` through which the search is performed over multiple (human readable) identifiers at once (it is typically used in face to face process with client who may not know which type of identifier he has).
 
 If the request was successfully processed, partner receives HTTP status code 200. If specified application was not found, empty data are returned.
 
@@ -238,11 +238,12 @@ In other cases, partner receives one of the following errors:
   | 400         | INVALID_REQUEST       | Request was not well formatted (malformed request syntax, size too large, etc.)  |
   | 500         | INTERNAL_SERVER_ERROR | Unexpected condition was encountered and no more specific message is suitable    |
 
- 
+
 ### Search applications [GET]
 + Parameters
-  + applicationId: `11200a0ee-adf54-dsa-5akdur` (string, optional) - Primary identifier of the application.
-  + contractNumber: `4066554400` (string, optional) - Identifier of the contract. Used when the partner does not have the application identifier.
+  + applicationId: `11200a0ee-adf54-dsa` (string, optional) - Primary identifier of the application.
+  + contractNumber: `4106554400` (string, optional) - Identifier of the contract. Used when the partner does not have the application identifier.
+  + applicationKey: `4106554400` (string, optional) - Filter attribute through which the search is performed over multiple identifiers at once. Identifiers for contract number, application number (human readable attribute, not `applicationId`) or order number are used during the search. The use of this search attribute may cause a longer amount of time to complete the search and (in an extremely rare case) may return more than one application.
 
 + Request Valid (application/json;charset=UTF-8)
 
@@ -276,9 +277,9 @@ Financing application base information
 + workflowSteps (array[WorkflowStep], fixed-type, optional) - Collection of application process actions available for current application state.
 
 ## Application (ApplicationBase)
-+ customer (ApplicationCustomerBase, optional) - Customer information
++ applicationCustomer (ApplicationCustomerBase, optional) - Customer information
 + financedSubject (FinancedSubjectMinimal, required) - Subject of financing (for example Iphone purchase...)
-+ contract (Contract, optiona) - Information about contract originating from this application
++ contract (Contract, optional) - Information about contract originating from this application. If no contract was created (for example existing contract was used for financing), class `contract` is not supplied.
 + originationContext (OriginationContext, required) - Additional information about context of application origination
 + services (array[Service], fixed-type, optional) - Additional services agreed for the application (for example insurance)
 
@@ -294,7 +295,7 @@ Financing application base information
 + `streetNumber`: `22` (string, required) - Street number
 + `city`: `Prague` (string, required) - City
 + `zip`: `140 00` (string, required) - Postal code
-+ `country`: `CZ` (string, required) - Customer's country, [ISO 3166-1 format, subtype ALPHA-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). This means two letters in uppercase. 
++ `country`: `CZ` (string, required) - Customer's country, [ISO 3166-1 format, subtype ALPHA-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). This means two letters in uppercase.
 + `flags` (array[AddressFlag], fixed-type,  required) - Types of the address.
 
 ## AddressFlag(enum)
@@ -312,15 +313,24 @@ Financing application base information
 + `order` (OrderMinimal, optional) - Information about the client's purchase of goods. REQUIRED for `ORDER` type of Financed subject
 
 ## OrderMinimal (object)
-+ number: `1234567890` (string, optional) - Identifier, specified by the partner (e-shop, POS shop)
++ number: `1234567890` (string, optional) - Identifier, specified by the partner (e-shop, POS shop), if provided
 + totalPrice (Amount, required) - Total order amount, including VAT
 + downPayment (Amount, optional) - Down payment amount
 + variableSymbol: `1234567` (string,  optional) - Variable symbol (internal for partner) for reconciliation payment, if provided
++ financing (OrderFinancing, optional) - Information about form of financing `ORDER` type of application
 
 ## Contract (object)
 + number: `4066554400` (string, required) - Unique identifier of contract
 + creditAmount (Amount, required) - Selected credit amount of product
 + productCode: `COCONL06` (string, required) - Product code
+
+## OrderFinancing (object)
++ type: `INSTALLMENT` (enum, required) - Financing type
+  + `INSTALLMENT` - Pay in monthly installments ("nákup na splátky")
++ `installment` (Installment, optional) - Product details for installment type of financing.  REQUIRED for `INSTALLMENT` financing type
+
+## Installment (object)
++ productCode: `COCONL06` (string, optional) - Product code of installment program.
 
 ## Service (object)
 + type: `INSURANCE` (enum, required) - Service type
@@ -333,6 +343,7 @@ Financing application base information
 ## WorkflowStep (object)
 + code :`DELIVERY` (enum, required) - Workflow code
     + `DELIVERY` - The application has been processed and the goods delivery process should be started
+    + `DELIVERED` - From the application process point of view the goods delivery process has been ended. Partner should finalize the delivery process on his side as soon as possible.
 + mandatory: `true` (boolean, required) - Workflow step may be optional (some additional services available for client) or required (scoring, contract signature etc.)
 + priority: `1` (string, required) - Identifier of workflow step's priority expressed as number (lowest number means highest priority)
 
@@ -451,8 +462,8 @@ Authenticated partner access token
 + `grant_type` (enum, required) - Grant flow type, only `authorization_code` and `refresh_token` is supported
     + `authorization_code` - use to exchange code for access token
     + `refresh_token` - can be used to get new access token instead of forcing user to login again
-+ `client_id`: `my_app_id` (string, required) - client_id parameter of partner's application, received at application registration
-+ `client_secret`: `my_app_secret` (string, required) - client_secret parameter of partner's application, received at application registration
++ `client_id`: `my_app_id` (string, required) - `client_id` parameter of partner's application, received at application registration
++ `client_secret`: `my_app_secret` (string, required) - `client_secret` parameter of partner's application, received at application registration
 + One Of
     + `code`: `12254a1124` (string, required) - Authorization code, received from authorization server
     + `refresh_token`: `12254a1124` (string, required) - Refresh token, received from authorization server
