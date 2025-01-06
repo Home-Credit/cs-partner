@@ -227,7 +227,7 @@ Partner authenticate himself and obtain acces token with this resource.
 
 # Group Application resources
 
-## Application operations [/partner/v1/applications{?applicationId,contractNumber}]
+## Application operations [/partner/v1/applications{?applicationId,contractNumber,applicationKey}]
 Partner may use resource `/partner/v1/applications` to check the state of partner's application and getting detailed information about it. Partner needs any identifier of application, either technical identifier of application (`applicationId` which is in the form of UUID), identifier of contract (human readable `contractNumber`) or `applicationKey` through which the search is performed over multiple (human readable) identifiers at once (it is typically used in face to face process with client who may not know which type of identifier he has).
 
 If the request was successfully processed, partner receives HTTP status code 200. If specified application was not found, empty data are returned.
@@ -323,9 +323,7 @@ Financing application base information
 + `partnerId`: `1485` (string, optional) - Unique identifier of partner's salesman in partner's system, filled into Home Credit database during the registration of a new salesman (if provided).
 
 ## Acquirer (object)
-+ `firstName`: `Jan` (string, optional)
-+ `lastName`: `Novák` (string, optional)
-+ `code`: `JN` (string, required) - Any string value filled in during the origination process.
++ `code`: `František Svoboda` (string, required) - Any string value filled in during the origination process.
 
 ## FinancedSubjectAbstract (object)
 + type: `ORDER` (enum, required) - Type of financed subject
@@ -342,9 +340,9 @@ Financing application base information
 + financing (OrderFinancing, optional) - Information about form of financing `ORDER` type of application
 
 ## Contract (object)
-+ number: `4066554400` (string, required) - Unique identifier of contract
++ number: `7411164300` (string, required) - Unique identifier of contract
 + creditAmount (Amount, required) - Selected credit amount of product
-+ productCode: `COCONL06` (string, required) - Product code
++ productCode: `HCRUCPR11` (string, required) - Product code
 
 ## OrderFinancing (object)
 + type: `INSTALLMENT` (enum, required) - Financing type
@@ -352,7 +350,7 @@ Financing application base information
 + `installment` (Installment, optional) - Product details for installment type of financing.  REQUIRED for `INSTALLMENT` financing type
 
 ## Installment (object)
-+ productCode: `COCONL06` (string, optional) - Product code of installment program.
++ productCode: `COCDESETOS` (string, optional) - Product code of installment program.
 
 ## Service (object)
 + type: `INSURANCE` (enum, required) - Service type
@@ -360,7 +358,7 @@ Financing application base information
 + insurance (Insurance, optional) - REQUIRED for `INSURANCE` type of service
 
 ## Insurance (object)
-+ code: `IN1` (string, required) - Maximal available credit amount
++ code: `MCRP` (string, required) - Insurance package code
 
 ## WorkflowStep (object)
 + code :`DELIVERY` (enum, required) - Workflow code
@@ -499,7 +497,7 @@ Authenticated partner access token
 
 ## AgentAccount (object)
 + name: `Jiří` (string, required) - User's first name.
-+ lastName: `Novák` (string, required) - User's last name.
++ lastName: `Pospíšil` (string, required) - User's last name.
 + salesrooms (array[Salesroom], fixed-type, optional) - List of salesrooms for which user is registered.
 
 ## Salesroom (object)
