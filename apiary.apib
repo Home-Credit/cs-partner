@@ -228,7 +228,7 @@ Partner authenticate himself and obtain acces token with this resource.
 # Group Application resources
 
 ## Application operations [/partner/v1/applications{?applicationId,contractNumber,applicationKey}]
-Partner may use resource `/partner/v1/applications` to check the state of partner's application and getting detailed information about it. Partner needs any identifier of application, either technical identifier of application (`applicationId` which is in the form of UUID), identifier of contract (human readable `contractNumber`) or `applicationKey` through which the search is performed over multiple (human readable) identifiers at once (it is typically used in face to face process with client who may not know which type of identifier he has).
+Partner may use resource `/partner/v1/applications` to check the state of partner's application and getting detailed information about it. Partner needs some identifier of application, either technical identifier of application (`applicationId` which is in the form of UUID), identifier of contract (human readable `contractNumber`) or `applicationKey` through which the search is performed over multiple (human readable) identifiers at once (it is typically used in face to face process with client who may not know which type of identifier he has).
 
 If the request was successfully processed, partner receives HTTP status code 200. If specified application was not found, empty data are returned.
 
