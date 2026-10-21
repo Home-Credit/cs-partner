@@ -6,13 +6,13 @@ info:
     API documentation for Home Credit API for partners.
 
 
-    > Version of documentation: `1.2.2` (10/2023)
+    > Version of documentation: `1.2.3` (10/2026)
 
 
     ## Getting started
 
 
-    This online document describes Home Credit (HC) API for partners - the means for partners through which they can get informations about client contracts with Home Credit.
+    This online document describes Home Credit (HC) API for partners - the means for partners through which they can get information about client contracts with Home Credit.
 
 
     | Group of services                                           | Purpose                                                                                                                                                      |
@@ -294,7 +294,7 @@ info:
     - **phone numbers** uses international mobile phone number format starting with '+' and including country code (example of valid number: `+420739111222`)
 
 
-    - **numbers format** number format is defined by [JSON standard](http://www.json.org), e.g. decimals are separated by `.`
+    - **numbers format** number format is defined by [JSON standard](https://www.json.org/json-en.html), e.g. decimals are separated by `.`
 
 
     - **money format** uses [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) formatting (in minor units, e.g.: 12590 in minor units represents 125,90 CZK/EUR)
@@ -312,7 +312,7 @@ paths:
     post:
       responses:
         "200":
-          description: Partner acces token issued
+          description: Partner access token issued
           headers: {}
           content:
             application/json; charset=utf-8:
@@ -342,7 +342,7 @@ paths:
       summary: Login partner
       operationId: Login partner
       description: >-
-        Partner authenticate himself and obtain acces token with this resource.
+        Partner authenticate himself and obtain access token with this resource.
 
 
         > **IMPORTANT NOTE:** Credentials for `/authentication/v1/partner` and  `/authentication/v2/partner` are not the same!
@@ -380,7 +380,7 @@ paths:
                 response:
                   value:
                     data:
-                      - id: 11200a0ee-adf54-dsa
+                      - id: 8ff543bc-affb-4cbe-8fd0-6b8f99a64d20
                         status: CREATED
                         workflowSteps:
                           - code: DELIVERY
@@ -415,7 +415,7 @@ paths:
                               installment:
                                 productCode: COCDESETOS
                         contract:
-                          number: "7411164300"
+                          number: "7610112233"
                           creditAmount:
                             value: 13300
                             currency: CZK
@@ -480,9 +480,9 @@ paths:
           | 500         | INTERNAL_SERVER_ERROR | Unexpected condition was encountered and no more specific message is suitable    |
 
         + Parameters
-          + applicationId: `11200a0ee-adf54-dsa` (string, optional) - Primary identifier of the application.
-          + contractNumber: `4106554400` (string, optional) - Identifier of the contract. Used when the partner does not have the application identifier.
-          + applicationKey: `4106554400` (string, optional) - Filter attribute through which the search is performed over multiple identifiers at once. Identifiers for contract number, application number (human readable attribute, not `applicationId`) or order number are used during the search. The use of this search attribute may cause a longer amount of time to complete the search and (in an extremely rare case) may return more than one application.
+          + applicationId: `8ff543bc-affb-4cbe-8fd0-6b8f99a64d20` (string, optional) - Primary identifier of the application.
+          + contractNumber: `7610112233` (string, optional) - Identifier of the contract. Used when the partner does not have the application identifier.
+          + applicationKey: `7610112233` (string, optional) - Filter attribute through which the search is performed over multiple identifiers at once. Identifiers for contract number, application number (human readable attribute, not `applicationId`) or order number are used during the search. The use of this search attribute may cause a longer amount of time to complete the search and (in an extremely rare case) may return more than one application.
       tags:
         - Application resources
       parameters:
@@ -490,7 +490,7 @@ paths:
           in: query
           description: Primary identifier of the application.
           required: false
-          example: 11200a0ee-adf54-dsa
+          example: 8ff543bc-affb-4cbe-8fd0-6b8f99a64d20
           schema:
             type: string
         - name: contractNumber
@@ -498,7 +498,7 @@ paths:
           description: Identifier of the contract. Used when the partner does not have the
             application identifier.
           required: false
-          example: "4106554400"
+          example: "7610112233"
           schema:
             type: string
         - name: applicationKey
@@ -511,7 +511,7 @@ paths:
             and (in an extremely rare case) may return more than one
             application.
           required: false
-          example: "4106554400"
+          example: "7610112233"
           schema:
             type: string
 tags:
@@ -599,7 +599,7 @@ components:
       properties:
         id:
           type: string
-          example: 11200a0ee-adf54-dsa
+          example: 8ff543bc-affb-4cbe-8fd0-6b8f99a64d20
           description: Unique identifier in Home Credit
         status:
           type: string
@@ -822,7 +822,7 @@ components:
       properties:
         number:
           type: string
-          example: "7411164300"
+          example: "7610112233"
           description: Unique identifier of contract
         creditAmount:
           $ref: "#/components/schemas/Amount"
@@ -882,7 +882,11 @@ components:
           enum:
             - DELIVERY
             - DELIVERED
-          description: Workflow code
+            - PAID
+          description: Workflow code.
+            DELIVERY = The application has been processed and the goods delivery process should be started.
+            DELIVERED = From the application process point of view the goods delivery process has been ended. Partner should finalize the delivery process on his side as soon as possible.
+            PAID = The order has been paid to the partner. Partner still could finalize the delivery process on his side, if it was not done yet.
         mandatory:
           type: boolean
           example: true
