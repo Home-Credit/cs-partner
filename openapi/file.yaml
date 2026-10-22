@@ -883,11 +883,11 @@ components:
             - DELIVERY
             - DELIVERED
             - PAID
-          description: |+ 
-            Workflow code.
-            DELIVERY = The application has been processed and the goods delivery process should be started.
-            DELIVERED = From the application process point of view the goods delivery process has been ended. Partner should finalize the delivery process on his side as soon as possible.
-            PAID = The order has been paid to the partner. Partner still could finalize the delivery process on his side, if it was not done yet.
+          description:
+            - Workflow code with information about order processing etc.
+            - DELIVERY = The application has been processed and the goods delivery process should be started.
+            - DELIVERED = From the application process point of view the goods delivery process has been ended. Partner should finalize the delivery process on his side as soon as possible.
+            - PAID = The order has been paid to the partner. Partner still could finalize the delivery process on his side, if it was not done yet.
         mandatory:
           type: boolean
           example: true
